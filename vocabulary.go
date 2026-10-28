@@ -168,6 +168,11 @@ const (
 	// SuggestionSourceGoogleContacts is ~/bin/people-import-contacts, an
 	// importer of a Google Contacts export (vCard files).
 	SuggestionSourceGoogleContacts = "google_contacts"
+	// SuggestionSourcePhoneMessages is journal-store's
+	// journal-import-android-messages, an importer: a phone number the
+	// operator texted with that no person has, named as the phone's own
+	// contact list saved it.
+	SuggestionSourcePhoneMessages = "phone_messages"
 
 	SuggestionStatusProposed = "proposed"
 	SuggestionStatusAccepted = "accepted"
@@ -179,14 +184,14 @@ const (
 )
 
 // SuggestionSources is every source that may propose suggestions.
-var SuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceAgent, SuggestionSourceGoogleContacts}
+var SuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceAgent, SuggestionSourceGoogleContacts, SuggestionSourcePhoneMessages}
 
 // importerSuggestionSources propose a handle at most once, ever: a handle in
 // any suggestion, whatever its status, is skipped. The other sources are
 // reviewers: they skip only a handle in one of their own suggestions that is
 // still proposed, must give a reason, and get a 409 for a handle the operator
 // refused for the person the suggestion points at.
-var importerSuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceGoogleContacts}
+var importerSuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceGoogleContacts, SuggestionSourcePhoneMessages}
 
 // SuggestionStatuses is every state a suggestion can be in.
 var SuggestionStatuses = []string{SuggestionStatusProposed, SuggestionStatusAccepted, SuggestionStatusRejected, SuggestionStatusSuperseded}

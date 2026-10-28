@@ -970,3 +970,17 @@ func TestGoogleContactsIsAnImporterThatNeverProposesAHandleTwice(t *testing.T) {
 		t.Errorf("multichat proposing a google_contacts handle = %+v, %v", other, err)
 	}
 }
+
+func TestPhoneMessagesIsAnImporterThatNeverProposesAHandleTwice(t *testing.T) {
+	store, _ := openTestStore(t)
+	first, err := store.ProposeSuggestion(SuggestionInput{Source: SuggestionSourcePhoneMessages, DisplayName: "Carol",
+		Identities: []IdentityInput{{Kind: "phone", Value: "+12025550111"}}})
+	if err != nil || !first.Created {
+		t.Fatalf("first proposal = %+v, %v", first, err)
+	}
+	again, err := store.ProposeSuggestion(SuggestionInput{Source: SuggestionSourcePhoneMessages, DisplayName: "Carol",
+		Identities: []IdentityInput{{Kind: "phone", Value: "+12025550111"}}})
+	if err != nil || again.Created {
+		t.Errorf("the same handle proposed again = %+v, %v", again, err)
+	}
+}

@@ -119,8 +119,10 @@ one queue of guesses about who is who.** Nothing in a suggestion is attached
 until the operator accepts it; a direct link (`POST /persons/{id}/identities`
 from any source) is the other way in.
 
-Sources are `multichat` and `google_contacts`, **importers**
-(`~/bin/people-import-multichat`, `~/bin/people-import-contacts`), and
+Sources are `multichat`, `google_contacts` and `phone_messages`, **importers**
+(`~/bin/people-import-multichat`, `~/bin/people-import-contacts`, and
+journal-store's `journal-import-android-messages` for numbers in a phone's
+text messages), and
 `agent`, a **reviewer** (the contact review agent):
 
 - An importer never proposes a handle twice: one held by any suggestion,
