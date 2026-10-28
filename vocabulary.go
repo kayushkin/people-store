@@ -165,6 +165,9 @@ const (
 	SuggestionSourceMultichat = "multichat"
 	// SuggestionSourceAgent is the contact review agent, a reviewer.
 	SuggestionSourceAgent = "agent"
+	// SuggestionSourceGoogleContacts is ~/bin/people-import-contacts, an
+	// importer of a Google Contacts export (vCard files).
+	SuggestionSourceGoogleContacts = "google_contacts"
 
 	SuggestionStatusProposed = "proposed"
 	SuggestionStatusAccepted = "accepted"
@@ -176,14 +179,14 @@ const (
 )
 
 // SuggestionSources is every source that may propose suggestions.
-var SuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceAgent}
+var SuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceAgent, SuggestionSourceGoogleContacts}
 
 // importerSuggestionSources propose a handle at most once, ever: a handle in
 // any suggestion, whatever its status, is skipped. The other sources are
 // reviewers: they skip only a handle in one of their own suggestions that is
 // still proposed, must give a reason, and get a 409 for a handle the operator
 // refused for the person the suggestion points at.
-var importerSuggestionSources = []string{SuggestionSourceMultichat}
+var importerSuggestionSources = []string{SuggestionSourceMultichat, SuggestionSourceGoogleContacts}
 
 // SuggestionStatuses is every state a suggestion can be in.
 var SuggestionStatuses = []string{SuggestionStatusProposed, SuggestionStatusAccepted, SuggestionStatusRejected, SuggestionStatusSuperseded}

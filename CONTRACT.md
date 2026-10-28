@@ -9,8 +9,8 @@ be assigned a card. A person may point at a principal with `principal_id`; this
 store never copies a principal's name or email.
 
 Module `github.com/kayushkin/people-store`, root package `peoplestore`, server
-in `cmd/people-store`, importer in `cmd/people-import-multichat`, both installed
-to `~/bin`. SQLite at `<data dir>/people-store.db`, WAL, foreign keys on. Build
+in `cmd/people-store`, importers in `cmd/people-import-multichat` and
+`cmd/people-import-contacts`, all installed to `~/bin`. SQLite at `<data dir>/people-store.db`, WAL, foreign keys on. Build
 and test with `-tags sqlite_fts5`.
 
 **No auth, so the bind is `127.0.0.1` and that is part of this contract.**
@@ -119,7 +119,8 @@ one queue of guesses about who is who.** Nothing in a suggestion is attached
 until the operator accepts it; a direct link (`POST /persons/{id}/identities`
 from any source) is the other way in.
 
-Sources are `multichat`, an **importer** (`~/bin/people-import-multichat`), and
+Sources are `multichat` and `google_contacts`, **importers**
+(`~/bin/people-import-multichat`, `~/bin/people-import-contacts`), and
 `agent`, a **reviewer** (the contact review agent):
 
 - An importer never proposes a handle twice: one held by any suggestion,
@@ -232,3 +233,25 @@ Environment, all required: `PEOPLE_STORE_URL`, `MULTICHAT_URL`,
 `AUTH_STORE_URL`, `AUTH_STORE_TOKEN`. It prints one line per suggestion made
 and a JSON summary with the activity counts, and exits 1 on any failure; when
 a group fails, it reports no activity.
+
+## The Google Contacts importer
+
+`~/bin/people-import-contacts -export-dir DIR [-north-american-numbers]
+[-include-other-contacts] [-dry-run] [-sample N]` reads every `.vcf` under a
+Google Takeout Contacts directory and posts one suggestion, source
+`google_contacts`, per contact (cards merged when they share their name words
+and a phone or email) that has a phone or email no person has and no
+suggestion holds. It sends all the contact's handles; the store leaves out
+owned ones and names their owners in `matched_person_ids`. `reason` says the
+card's name, whether it is starred, any person whose name matches when no
+handle does (a hint only), the organisation and a birthday to set by hand.
+`source_detail` is `{formatted_name, structured_name, nicknames,
+organization, birthday, birthday_raw, note, categories, starred, has_photo,
+phones: [{raw, e164, label, skipped}], emails: [{raw, address, label}], files,
+name_matches: [{person_id, display_name}]}`. Before writing it reads
+`GET /persons`, `GET /identities?kind=phone|email` and every suggestion, so
+`-dry-run` prints what a run would do: counts by outcome (`suggest`,
+`already_known`, `already_proposed`, `skipped_no_handle`,
+`skipped_other_contact`, `skipped_no_name`) and by suggestion kind
+(`extends_person`, `name_match`, `new_person`), with examples. Environment:
+`PEOPLE_STORE_URL`. Exits 1 when any proposal fails.

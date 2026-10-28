@@ -12,6 +12,7 @@ GO_TAGS := sqlite_fts5
 build:
 	go build -tags $(GO_TAGS) -o people-store ./cmd/people-store
 	go build -tags $(GO_TAGS) -o people-import-multichat ./cmd/people-import-multichat
+	go build -tags $(GO_TAGS) -o people-import-contacts ./cmd/people-import-contacts
 
 test:
 	go test -tags $(GO_TAGS) ./...

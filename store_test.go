@@ -939,3 +939,34 @@ func TestTheLinkRefusalAndReviewRoutes(t *testing.T) {
 		t.Errorf("review = %d %s", status, body)
 	}
 }
+
+func TestGoogleContactsIsAnImporterThatNeverProposesAHandleTwice(t *testing.T) {
+	store, _ := openTestStore(t)
+	alice := mustCreate(t, store, "Alice")
+	if _, _, err := store.AddIdentity(alice.ID, IdentityLinkInput{LinkedBy: "operator", Kind: "email", Value: "alice@example.com"}); err != nil {
+		t.Fatal(err)
+	}
+	first, err := store.ProposeSuggestion(SuggestionInput{Source: SuggestionSourceGoogleContacts, DisplayName: "Alice A.",
+		Identities: []IdentityInput{{Kind: "email", Value: "Alice@Example.com"}, {Kind: "phone", Value: "+1 202 555 0100", Label: "cell"}}})
+	if err != nil || !first.Created {
+		t.Fatalf("first proposal = %+v, %v", first, err)
+	}
+	payload := first.Suggestion.Payload
+	if len(payload.Identities) != 1 || payload.Identities[0].Value != "+12025550100" || len(payload.MatchedPersonIDs) != 1 || payload.MatchedPersonIDs[0] != alice.ID {
+		t.Errorf("payload = %+v, want only the phone, matched to %s", payload, alice.ID)
+	}
+	if _, err := store.RejectSuggestion(first.Suggestion.ID); err != nil {
+		t.Fatal(err)
+	}
+	again, err := store.ProposeSuggestion(SuggestionInput{Source: SuggestionSourceGoogleContacts, DisplayName: "Alice A.",
+		Identities: []IdentityInput{{Kind: "phone", Value: "+12025550100"}}})
+	if err != nil || again.Created {
+		t.Errorf("a rejected handle proposed again = %+v, %v", again, err)
+	}
+	// Another importer is held to the same rule.
+	other, err := store.ProposeSuggestion(SuggestionInput{Source: SuggestionSourceMultichat, DisplayName: "Alice",
+		Identities: []IdentityInput{{Kind: "phone", Value: "+12025550100"}}})
+	if err != nil || other.Created {
+		t.Errorf("multichat proposing a google_contacts handle = %+v, %v", other, err)
+	}
+}

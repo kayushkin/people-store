@@ -12,7 +12,7 @@ SERVICE="people-store.service"
 BINARY="people-store"
 # Commands an operator or a scheduler job runs, built from cmd/<name> and
 # installed as ~/bin/<name>.
-COMMANDS=(people-import-multichat)
+COMMANDS=(people-import-multichat people-import-contacts)
 UNIT_SRC="$REPO_DIR/$SERVICE"
 UNIT_DEST="$HOME/.config/systemd/user/$SERVICE"
 

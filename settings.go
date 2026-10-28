@@ -93,3 +93,26 @@ func ImporterSettingDefinitions() []servicesettings.Definition {
 func NewImporterSettingsRegistry(environment servicesettings.Environment) (*servicesettings.Registry, error) {
 	return servicesettings.New(ImporterName, nil, ImporterSettingDefinitions(), environment)
 }
+
+// The Google Contacts importer, cmd/people-import-contacts, reads vCard files
+// named on its command line and writes only to people-store, so it needs one
+// setting. Like the multichat importer it owns no prefix.
+
+// ContactsImporterName is the Google Contacts importer's name in its settings
+// errors.
+const ContactsImporterName = "people-import-contacts"
+
+// ContactsImporterSettingDefinitions declares every environment variable the
+// Google Contacts importer reads.
+func ContactsImporterSettingDefinitions() []servicesettings.Definition {
+	return []servicesettings.Definition{
+		{Key: ImporterSettingPeopleStoreURL, EnvironmentVariable: "PEOPLE_STORE_URL", Kind: msg.ServiceSettingKindWiring, ValueType: msg.ServiceSettingValueTypeString, Required: true,
+			Description: "Where people-store answers; persons, identities and suggestions are read there, and suggestions written through its POST /suggestions."},
+	}
+}
+
+// NewContactsImporterSettingsRegistry reads the Google Contacts importer's
+// settings from environment.
+func NewContactsImporterSettingsRegistry(environment servicesettings.Environment) (*servicesettings.Registry, error) {
+	return servicesettings.New(ContactsImporterName, nil, ContactsImporterSettingDefinitions(), environment)
+}
