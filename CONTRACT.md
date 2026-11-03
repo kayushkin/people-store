@@ -54,13 +54,13 @@ fields above plus `identities` and `relationships`, each `[]` when empty.
 
 A handle that reaches a person. `{id, person_id, kind, value, label, linked_by, reason, linked_at, created_at, updated_at}`.
 **One handle belongs to at most one person**: `UNIQUE(kind, value)` on the
-normalised value. **Every link says who made it and why**: `linked_by` is one
+normalized value. **Every link says who made it and why**: `linked_by` is one
 of `GET /link-sources`, `reason` is the linker's words, `linked_at` when the
 link was made (an import may give an earlier time than `created_at`). Handles
 attached before 2026-10-01 carry `linked_by: import` and a reason that says so.
 Kinds are served by `GET /identity-kinds`:
 
-| Kind | Normalised to |
+| Kind | Normalized to |
 |---|---|
 | `email` | trimmed, lowercased; must hold an `@` |
 | `phone` | `+` and digits. Input must start with `+` (international form); spaces, `-`, `.`, `(`, `)` are dropped; 7–15 digits |
@@ -143,7 +143,7 @@ person.
 
 ### Handle activity
 
-What a source saw of one handle, keyed like an identity on the normalised
+What a source saw of one handle, keyed like an identity on the normalized
 `(kind, value)`: `{kind, value, last_activity_at, message_count, direct_chat}`,
 stored with the `source` that reported it and `observed_at`. A fact about the
 handle, not about a suggestion or a person; suggestions read it. `last_activity_at`
@@ -189,8 +189,8 @@ their identities **as they were just before** `action` changed them. Actions:
 | POST | `/persons/{id}/identities` | `{kind, value, label?, linked_by, reason?, linked_at?, move?}` | 201 Identity; 200 when this person already had it (its provenance unchanged); 409 naming the owner when someone else has it, unless `move: true` from the operator, which takes it and refuses it for the person it left; 409 for a refused pair from a source that does not override refusals; 409 on a deleted person. No `linked_by`, a missing required `reason`, a future `linked_at`, or `move` from another source is 400 |
 | GET | `/identities` | `kind`, `limit` (default and max 1000), `offset` | `[Identity]` in the order attached, for a caller that maps every handle of a kind to its person |
 | DELETE | `/identities/{id}` | | 204. The operator's act: the row goes, the revision keeps it, and a refusal of the handle for that person is written |
-| GET | `/refusals` | `person_id`, `kind`, `value` (needs `kind`; normalised) | `[Refusal]` oldest first |
-| GET | `/identities/resolve` | `kind`, `value` (normalised as on write) | `{identity, person}`; 404 when nobody has it |
+| GET | `/refusals` | `person_id`, `kind`, `value` (needs `kind`; normalized) | `[Refusal]` oldest first |
+| GET | `/identities/resolve` | `kind`, `value` (normalized as on write) | `{identity, person}`; 404 when nobody has it |
 | POST | `/persons/{id}/relationships` | `{person_id, kind, note?}` — "person_id is this person's kind" | 201 Relationship. Self 400; either side deleted 409; the same fact from either side again 409 |
 | DELETE | `/relationships/{id}` | | 204 |
 | GET | `/suggestions` | `status`, `q` (substring of `display_name`, ASCII case ignored), `sort` (`created`, the default: oldest first; `activity`: people the operator talks to first — any handle with `direct_chat` first, then newest `last_activity_at`, then most messages, then oldest; anything else 400 naming both), `limit` (default 100, max 1000), `offset` | `[Suggestion]` |
@@ -201,7 +201,7 @@ their identities **as they were just before** `action` changed them. Actions:
 | GET | `/reviews/pending` | `limit` (default 25, 1–1000) | `{total, active_claims, pending: [PendingReview]}` |
 | POST | `/reviews/claim` | `{limit (1–100), claimed_by}` | `{claimed: [PendingReview], remaining}`; the claimed handles leave the queue for 30 minutes |
 | POST | `/reviews` | `{handles: [{kind, value}], reviewed_by, reviewed_at?}` | `{reviewed}`; ends their claims |
-| PUT | `/handle-activity` | `{source, activities:[{kind, value, last_activity_at, message_count, direct_chat}]}` | `{updated}`. Each handle is normalised and its row replaced, all in one transaction. Unknown source, a bad handle, a negative number, a handle named twice or an unknown key 400, and nothing is written |
+| PUT | `/handle-activity` | `{source, activities:[{kind, value, last_activity_at, message_count, direct_chat}]}` | `{updated}`. Each handle is normalized and its row replaced, all in one transaction. Unknown source, a bad handle, a negative number, a handle named twice or an unknown key 400, and nothing is written |
 
 ## Chat reference chips
 
@@ -216,7 +216,7 @@ its `resolveServiceURLSetting` map before it can probe.
 
 `~/bin/people-import-multichat` reads multichat's `GET /api/contacts/unified`
 (token from auth-store provider `multichat`) and posts one suggestion per
-group: each member account becomes a `matrix_user` handle labelled with its
+group: each member account becomes a `matrix_user` handle labeled with its
 platform. Since 2026-10-01 multichat groups by this store's `person_id`, so a
 linked group's handles are already attached and are skipped; what is left is
 mostly single unlinked accounts. Run it on a schedule (hourly, say); that is
@@ -246,7 +246,7 @@ and a phone or email) that has a phone or email no person has and no
 suggestion holds. It sends all the contact's handles; the store leaves out
 owned ones and names their owners in `matched_person_ids`. `reason` says the
 card's name, whether it is starred, any person whose name matches when no
-handle does (a hint only), the organisation and a birthday to set by hand.
+handle does (a hint only), the organization and a birthday to set by hand.
 `source_detail` is `{formatted_name, structured_name, nicknames,
 organization, birthday, birthday_raw, note, categories, starred, has_photo,
 phones: [{raw, e164, label, skipped}], emails: [{raw, address, label}], files,

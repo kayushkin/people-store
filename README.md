@@ -18,7 +18,7 @@ plain HTTP API.
   you met, tags, and an optional link to a login in
   principal-store.
 - **Handles** (`email`, `phone`, `matrix_user`, `discord`, `url`), stored
-  normalised. One handle belongs to at most one person, and every link records
+  normalized. One handle belongs to at most one person, and every link records
   who made it and why. Removing a handle from a person records a refusal, so
   no automatic source puts it back.
 - **Relationships**, stored once per fact and shown from each side with the
@@ -80,7 +80,7 @@ To run it as a systemd user service, copy the binary to `~/bin` and
 
 ```sh
 curl -s -X POST localhost:8321/persons -H 'Content-Type: application/json' \
-  -d '{"display_name":"Alice Smith","birthday":"--05-14","how_met":"book club","tags":["neighbours"]}'
+  -d '{"display_name":"Alice Smith","birthday":"--05-14","how_met":"book club","tags":["neighbors"]}'
 curl -s -X POST localhost:8321/persons/person_000001/identities \
   -d '{"kind":"email","value":"Alice@Example.com","linked_by":"operator"}'
 curl -s 'localhost:8321/identities/resolve?kind=email&value=alice@example.com'

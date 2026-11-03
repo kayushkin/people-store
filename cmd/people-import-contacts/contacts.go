@@ -55,7 +55,7 @@ const (
 )
 
 // displayName is the name a suggestion carries: FN, else the name from N,
-// else a nickname, else the organisation.
+// else a nickname, else the organization.
 func (c *contact) displayName() string {
 	for _, name := range append([]string{c.FormattedName, c.StructuredName}, append(c.Nicknames, c.Organization)...) {
 		if strings.TrimSpace(name) != "" {

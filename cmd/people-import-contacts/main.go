@@ -338,7 +338,7 @@ func suggestionInput(item plannedContact, persons map[string]peoplestore.Person)
 		reason = append(reason, fmt.Sprintf("No handle is known, but the name matches %s: if it is them, merge into them rather than accept as new.", strings.Join(named, ", ")))
 	}
 	if card.Organization != "" {
-		reason = append(reason, fmt.Sprintf("Organisation: %s.", card.Organization))
+		reason = append(reason, fmt.Sprintf("Organization: %s.", card.Organization))
 	}
 	if item.BirthdayNote != "" {
 		reason = append(reason, item.BirthdayNote)

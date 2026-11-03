@@ -25,7 +25,7 @@ CREATE INDEX IF NOT EXISTS idx_persons_deleted ON persons(deleted_at);
 
 -- A handle that reaches a person: an address, a number, a chat account.
 -- UNIQUE(kind, value) is the rule that one handle belongs to at most one
--- person. Values are stored normalised (see identity.go), so the rule holds
+-- person. Values are stored normalized (see identity.go), so the rule holds
 -- across spellings. Removing an identity deletes its row: nothing joins on an
 -- identity id, and the person's revisions keep the old list.
 CREATE TABLE IF NOT EXISTS identities (
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS handle_review_claims (
 
 -- What a source saw of one handle: when it was last active and how much it
 -- talks. A fact about the handle, not about any suggestion or person, so it is
--- keyed like identities, on the normalised (kind, value). Suggestions sum it
+-- keyed like identities, on the normalized (kind, value). Suggestions sum it
 -- over their handles at read time (suggestion.go), which is how the review
 -- queue puts people the operator talks to first. An importer rewrites a row
 -- whole on each run (PUT /handle-activity).

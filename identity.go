@@ -73,7 +73,7 @@ func (s *Store) ListIdentities(filter IdentityFilter) ([]Identity, error) {
 	return queryIdentities(s.db, query, args...)
 }
 
-// identityOwner returns the identity with this normalised kind and value, or
+// identityOwner returns the identity with this normalized kind and value, or
 // nil when no person holds it.
 func identityOwner(q queryer, kind, value string) (*Identity, error) {
 	identity, err := scanIdentity(q.QueryRow(`SELECT `+identityColumns+` FROM identities WHERE kind = ? AND value = ?`, kind, value).Scan)
@@ -161,7 +161,7 @@ type RefusalFilter struct {
 	Value    string
 }
 
-// ListRefusals lists refusals oldest first. Kind and Value are normalised as
+// ListRefusals lists refusals oldest first. Kind and Value are normalized as
 // on write; Value needs Kind.
 func (s *Store) ListRefusals(filter RefusalFilter) ([]Refusal, error) {
 	var where []string
@@ -206,7 +206,7 @@ func (s *Store) ListRefusals(filter RefusalFilter) ([]Refusal, error) {
 	return refusals, rows.Err()
 }
 
-// addIdentity attaches one normalised handle to a person inside tx, after
+// addIdentity attaches one normalized handle to a person inside tx, after
 // recording the person's revision. A handle already on this same person is
 // returned as it is (added=false). One on another person is a 409, unless the
 // link moves it (operator only), which records a refusal against the person it
@@ -416,7 +416,7 @@ func (s *Store) RemoveIdentity(id string) error {
 	return tx.Commit()
 }
 
-// ResolveIdentity finds who owns a handle, after normalising it the way it
+// ResolveIdentity finds who owns a handle, after normalizing it the way it
 // was stored. A deleted owner is returned with deleted_at set.
 func (s *Store) ResolveIdentity(kind, value string) (*IdentityResolution, error) {
 	normalized, err := NormalizeIdentity(IdentityInput{Kind: kind, Value: value})

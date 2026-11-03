@@ -61,7 +61,7 @@ type PersonPatch struct {
 	PrincipalID *string   `json:"principal_id,omitempty"`
 }
 
-// Identity is one handle that reaches a person. Value is stored normalised.
+// Identity is one handle that reaches a person. Value is stored normalized.
 type Identity struct {
 	ID       string `json:"id"`
 	PersonID string `json:"person_id"`
@@ -236,7 +236,7 @@ type SuggestionActivity struct {
 }
 
 // HandleActivity is what a source saw of one handle. Kind and Value are
-// normalised as identities are.
+// normalized as identities are.
 type HandleActivity struct {
 	Kind  string `json:"kind"`
 	Value string `json:"value"`

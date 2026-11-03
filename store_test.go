@@ -76,7 +76,7 @@ func TestIdsAreZeroPaddedSequencesWithTheirPrefix(t *testing.T) {
 	}
 }
 
-func TestIdentitiesAreNormalisedAndBelongToOnePerson(t *testing.T) {
+func TestIdentitiesAreNormalizedAndBelongToOnePerson(t *testing.T) {
 	store, _ := openTestStore(t)
 	alice := mustCreate(t, store, "Alice")
 	bob := mustCreate(t, store, "Bob")
@@ -435,7 +435,7 @@ func TestANewPersonTakesItsHandlesAllOrNothing(t *testing.T) {
 	}
 }
 
-func TestAgentSuggestionsSitBesideImporterOnesAndHonourRefusals(t *testing.T) {
+func TestAgentSuggestionsSitBesideImporterOnesAndHonorRefusals(t *testing.T) {
 	store, _ := openTestStore(t)
 	telegram := IdentityInput{Kind: "matrix_user", Value: "@telegram_1:x.com", Label: "telegram"}
 	discord := IdentityInput{Kind: "matrix_user", Value: "@discord_2:x.com", Label: "discord"}

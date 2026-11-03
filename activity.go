@@ -6,7 +6,7 @@ import (
 )
 
 // ReportHandleActivity replaces the activity rows of every handle in the
-// report, in one transaction: all of them or none. Each handle is normalised
+// report, in one transaction: all of them or none. Each handle is normalized
 // as an identity is; a handle named twice in one report is a 400, since one
 // of the two would silently win.
 func (s *Store) ReportHandleActivity(report HandleActivityReport) (*HandleActivityResult, error) {
@@ -17,7 +17,7 @@ func (s *Store) ReportHandleActivity(report HandleActivityReport) (*HandleActivi
 	if report.Activities == nil {
 		return nil, fmt.Errorf("%w: activities is required", ErrInvalid)
 	}
-	normalised := make([]HandleActivity, 0, len(report.Activities))
+	normalized := make([]HandleActivity, 0, len(report.Activities))
 	seen := map[string]bool{}
 	for index, activity := range report.Activities {
 		handle, err := NormalizeIdentity(IdentityInput{Kind: activity.Kind, Value: activity.Value})
@@ -33,7 +33,7 @@ func (s *Store) ReportHandleActivity(report HandleActivityReport) (*HandleActivi
 		}
 		seen[key] = true
 		activity.Kind, activity.Value = handle.Kind, handle.Value
-		normalised = append(normalised, activity)
+		normalized = append(normalized, activity)
 	}
 
 	tx, err := s.db.Begin()
@@ -50,7 +50,7 @@ func (s *Store) ReportHandleActivity(report HandleActivityReport) (*HandleActivi
 	}
 	defer statement.Close()
 	observedAt := now()
-	for _, activity := range normalised {
+	for _, activity := range normalized {
 		if _, err := statement.Exec(activity.Kind, activity.Value, source, activity.LastActivityAt, activity.MessageCount, activity.DirectChat, observedAt); err != nil {
 			return nil, err
 		}
@@ -58,5 +58,5 @@ func (s *Store) ReportHandleActivity(report HandleActivityReport) (*HandleActivi
 	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
-	return &HandleActivityResult{Updated: len(normalised)}, nil
+	return &HandleActivityResult{Updated: len(normalized)}, nil
 }

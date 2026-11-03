@@ -79,7 +79,7 @@ export interface PersonPatch {
   principal_id?: string;
 }
 /**
- * Identity is one handle that reaches a person. Value is stored normalised.
+ * Identity is one handle that reaches a person. Value is stored normalized.
  */
 export interface Identity {
   id: string;
@@ -299,7 +299,7 @@ export interface SuggestionActivity {
 }
 /**
  * HandleActivity is what a source saw of one handle. Kind and Value are
- * normalised as identities are.
+ * normalized as identities are.
  */
 export interface HandleActivity {
   kind: string;
