@@ -984,3 +984,23 @@ func TestPhoneMessagesIsAnImporterThatNeverProposesAHandleTwice(t *testing.T) {
 		t.Errorf("the same handle proposed again = %+v, %v", again, err)
 	}
 }
+
+func TestListPersonsByPrincipalFindsThePersonPointingAtIt(t *testing.T) {
+	store, _ := openTestStore(t)
+	member, err := store.CreatePerson(PersonInput{DisplayName: "Member", PrincipalID: "principal_000001"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustCreate(t, store, "Someone else")
+	found, err := store.ListPersons(PersonFilter{PrincipalID: "principal_000001"})
+	if err != nil || len(found) != 1 || found[0].ID != member.ID {
+		t.Errorf("principal_id=principal_000001 found %+v, %v", found, err)
+	}
+	none, err := store.ListPersons(PersonFilter{PrincipalID: "principal_000002"})
+	if err != nil || len(none) != 0 {
+		t.Errorf("a principal nobody points at found %+v, %v", none, err)
+	}
+	if _, err := store.ListPersons(PersonFilter{PrincipalID: "alice"}); !errors.Is(err, ErrInvalid) {
+		t.Errorf("a name as principal_id = %v, want a 400", err)
+	}
+}

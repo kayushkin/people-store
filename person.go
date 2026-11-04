@@ -10,8 +10,10 @@ import (
 
 // PersonFilter selects persons. The zero value lists every live person.
 type PersonFilter struct {
-	Query          string
-	Tag            string
+	Query string
+	Tag   string
+	// PrincipalID keeps only the person pointing at this principal-store id.
+	PrincipalID    string
 	IncludeDeleted bool
 	Limit          int
 	Offset         int
@@ -159,6 +161,13 @@ func (s *Store) ListPersons(filter PersonFilter) ([]Person, error) {
 	if tag := strings.TrimSpace(filter.Tag); tag != "" {
 		query += ` AND EXISTS (SELECT 1 FROM json_each(persons.tags) WHERE json_each.value = ?)`
 		args = append(args, tag)
+	}
+	if filter.PrincipalID != "" {
+		if !principalIDPattern.MatchString(filter.PrincipalID) {
+			return nil, fmt.Errorf("%w: principal_id %q is not a principal-store id (principal_000001)", ErrInvalid, filter.PrincipalID)
+		}
+		query += ` AND principal_id = ?`
+		args = append(args, filter.PrincipalID)
 	}
 	if strings.TrimSpace(filter.Query) != "" {
 		expression := searchExpression(filter.Query)

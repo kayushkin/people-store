@@ -138,7 +138,7 @@ func (h *handler) listPersons(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	persons, err := h.s.ListPersons(PersonFilter{Query: query.Get("q"), Tag: query.Get("tag"), IncludeDeleted: includeDeleted, Limit: limit, Offset: offset})
+	persons, err := h.s.ListPersons(PersonFilter{Query: query.Get("q"), Tag: query.Get("tag"), PrincipalID: query.Get("principal_id"), IncludeDeleted: includeDeleted, Limit: limit, Offset: offset})
 	if respondStoreError(w, err) {
 		return
 	}

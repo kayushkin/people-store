@@ -179,7 +179,7 @@ their identities **as they were just before** `action` changed them. Actions:
 | GET | `/identity-kinds` | | `[{kind, description}]` |
 | GET | `/relationship-kinds` | | `[{kind, inverse, description}]` |
 | GET | `/link-sources` | | `[{source, overrides_refusals, reason_required, description}]` |
-| GET | `/persons` | `q` (full-text, prefix per word, over name, how_met, tags and identity values and labels), `tag`, `include_deleted=true`, `limit` (default 100, max 1000), `offset` | `[Person]` by name |
+| GET | `/persons` | `q` (full-text, prefix per word, over name, how_met, tags and identity values and labels), `tag`, `principal_id` (the person pointing at that principal; not of the form `principal_000001` is 400), `include_deleted=true`, `limit` (default 100, max 1000), `offset` | `[Person]` by name |
 | POST | `/persons` | `{display_name, birthday?, how_met?, tags?, principal_id?, identities?: [{kind, value, label?, linked_by, reason?, linked_at?}]}` | 201 PersonDetail. The identities attach in the same transaction: a handle owned by someone else, or one named twice, refuses the whole write |
 | GET | `/persons/{id}` | | PersonDetail. **A deleted person answers 200 with `deleted_at` set**, so whatever points at them still resolves; unknown is 404 |
 | PATCH | `/persons/{id}` | any of `display_name`, `birthday`, `how_met`, `tags`, `principal_id`; `null` clears all but `display_name` | PersonDetail. Unknown key 400 (naming the accepted ones); `id`, `deleted_at`, `identities`, `relationships` refused naming the route that changes them; a deleted person 409 |
